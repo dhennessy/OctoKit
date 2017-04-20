@@ -211,7 +211,7 @@ enum IssueRouter: JSONPostRouter {
         switch self {
         case .postIssue, .patchIssue:
             return .POST
-        default:
+        case .readAuthenticatedIssues, .readIssue, .readIssues:
             return .GET
         }
     }
@@ -220,7 +220,7 @@ enum IssueRouter: JSONPostRouter {
         switch self {
         case .postIssue, .patchIssue:
             return .json
-        default:
+        case .readAuthenticatedIssues, .readIssue, .readIssues:
             return .url
         }
     }
