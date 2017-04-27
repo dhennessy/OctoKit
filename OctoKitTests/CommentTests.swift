@@ -26,7 +26,7 @@ class CommentTests: XCTestCase {
     }
     
     func testGetComments() {
-        let session = OctoKitURLTestSession(expectedURL: "https://api.github.com/repos/octocat/Hello-World/comments?page=1&per_page=100", expectedHTTPMethod: "GET", jsonFile: "comments", statusCode: 200)
+        let session = OctoKitURLTestSession(expectedURL: "https://api.github.com/repos/octocat/Hello-World/issues/comments?page=1&per_page=100", expectedHTTPMethod: "GET", jsonFile: "comments", statusCode: 200)
         let task = Octokit().comments(session, owner: "octocat", repository: "Hello-World") { response in
             switch response {
             case .success(let comments):

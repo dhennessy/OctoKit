@@ -246,7 +246,7 @@ enum CommentRouter: JSONPostRouter {
         case .readComment(_, let owner, let repository, let id):
             return "repos/\(owner)/\(repository)/issues/comments/\(id)"
         case .readComments(_, let owner, let repository, _, _):
-            return "repos/\(owner)/\(repository)/comments"
+            return "repos/\(owner)/\(repository)/issues/comments"
         case .readIssueComments(_, let owner, let repository, let number):
             return "repos/\(owner)/\(repository)/issues/\(number)/comments"
         case .patchComment(_, let owner, let repository, let id, _):
