@@ -4,9 +4,9 @@ import RequestKit
 // MARK: model
 
 public enum Openness: String {
-    case Open = "open"
-    case Closed = "closed"
-    case All = "all"
+    case open = "open"
+    case closed = "closed"
+    case all = "all"
 }
 
 @objc open class Issue: NSObject {
@@ -87,7 +87,7 @@ public extension Octokit {
      - parameter perPage: Number of issues per page. `100` by default.
      - parameter completion: Callback for the outcome of the fetch.
      */
-    public func myIssues(_ session: RequestKitURLSession = URLSession.shared, state: Openness = .Open, page: String = "1", perPage: String = "100", completion: @escaping (_ response: Response<[Issue]>) -> Void) -> URLSessionDataTaskProtocol? {
+    public func myIssues(_ session: RequestKitURLSession = URLSession.shared, state: Openness = .open, page: String = "1", perPage: String = "100", completion: @escaping (_ response: Response<[Issue]>) -> Void) -> URLSessionDataTaskProtocol? {
         let router = IssueRouter.readAuthenticatedIssues(configuration, page, perPage, state)
         return router.loadJSON(session, expectedResultType: [[String: AnyObject]].self) { json, error in
             if let error = error {
@@ -133,7 +133,7 @@ public extension Octokit {
      - parameter perPage: Number of issues per page. `100` by default.
      - parameter completion: Callback for the outcome of the fetch.
      */
-    public func issues(_ session: RequestKitURLSession = URLSession.shared, owner: String, repository: String, state: Openness = .Open, page: String = "1", perPage: String = "100", completion: @escaping (_ response: Response<[Issue]>) -> Void) -> URLSessionDataTaskProtocol? {
+    public func issues(_ session: RequestKitURLSession = URLSession.shared, owner: String, repository: String, state: Openness = .open, page: String = "1", perPage: String = "100", completion: @escaping (_ response: Response<[Issue]>) -> Void) -> URLSessionDataTaskProtocol? {
         let router = IssueRouter.readIssues(configuration, owner, repository, page, perPage, state)
         return router.loadJSON(session, expectedResultType: [[String: AnyObject]].self) { json, error in
             if let error = error {
