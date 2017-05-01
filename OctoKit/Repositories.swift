@@ -6,35 +6,54 @@ import RequestKit
 @objc open class Repository: NSObject {
     open let id: Int
     open let owner: User
+    open var url: URL?
     open var name: String?
     open var fullName: String?
+    open var hasIssues: Bool
     open var isPrivate: Bool
     open var repositoryDescription: String?
     open var isFork: Bool?
-    open var gitURL: String?
-    open var sshURL: String?
-    open var cloneURL: String?
-    open var htmlURL: String?
+    open var gitURL: URL?
+    open var sshURL: URL?
+    open var cloneURL: URL?
+    open var htmlURL: URL?
     open var size: Int
     open var lastPush: Date?
+    open var createdAt: Date?
+    open var updatedAt: Date?
 
     public init(_ json: [String: AnyObject]) {
         owner = User(json["owner"] as? [String: AnyObject] ?? [:])
         if let id = json["id"] as? Int {
             self.id = id
             name = json["name"] as? String
+            if let urlString = json["url"] as? String, let url = URL(string: urlString) {
+                self.url = url
+            }
             fullName = json["full_name"] as? String
+            hasIssues = json["has_issues"] as? Bool ?? false
             isPrivate = json["private"] as? Bool ?? false
             repositoryDescription = json["description"] as? String
             isFork = json["fork"] as? Bool
-            gitURL = json["git_url"] as? String
-            sshURL = json["ssh_url"] as? String
-            cloneURL = json["clone_url"] as? String
-            htmlURL = json["html_url"] as? String
+            if let urlString = json["git_url"] as? String, let url = URL(string: urlString) {
+                gitURL = url
+            }
+            if let urlString = json["ssh_url"] as? String, let url = URL(string: urlString) {
+                sshURL = url
+            }
+            if let urlString = json["clone_url"] as? String, let url = URL(string: urlString) {
+                cloneURL = url
+            }
+            if let urlString = json["html_url"] as? String, let url = URL(string: urlString) {
+                htmlURL = url
+            }
             size = json["size"] as? Int ?? 0
             lastPush = Time.rfc3339Date(json["pushed_at"] as? String)
+            createdAt = Time.rfc3339Date(json["created_at"] as? String)
+            updatedAt = Time.rfc3339Date(json["updated_at"] as? String)
         } else {
             id = -1
+            hasIssues = false
             isPrivate = false
             size = 0
         }
