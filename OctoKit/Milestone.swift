@@ -6,7 +6,7 @@ import Foundation
     open var labelsURL: URL?
     open var id: Int
     open var number: Int?
-    open var state: Openness?
+    open var state: State?
     open var title: String?
     open var milestoneDescription: String?
     open var creator: User?
@@ -27,7 +27,7 @@ import Foundation
             }
             self.id = id
             number = json["number"] as? Int
-            state = Openness(rawValue: json["state"] as? String ?? "")
+            state = State(rawValue: json["state"] as? String ?? "")
             title = json["title"] as? String
             milestoneDescription = json["description"] as? String
             creator = User(json["creator"] as? [String: AnyObject] ?? [:])

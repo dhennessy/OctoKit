@@ -25,4 +25,13 @@ struct Time {
         guard let string = string else { return nil }
         return Time.rfc3339DateFormatter.date(from: string)
     }
+    
+    /**
+     Formats dates according to RFC 3339
+     - parameter date: The date to convert
+     - returns: A string representing the date
+     */
+    static func rfc3339String(_ date: Date) -> String {
+        return Time.rfc3339DateFormatter.string(from: date)
+    }
 }

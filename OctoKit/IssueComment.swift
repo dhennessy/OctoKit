@@ -78,8 +78,25 @@ public extension Octokit {
      - parameter perPage: Number of comments per page. `100` by default.
      - parameter completion: Callback for the outcome of the fetch.
      */
-    public func comments(_ session: RequestKitURLSession = URLSession.shared, owner: String, repository: String, page: String = "1", perPage: String = "100", completion: @escaping (_ response: Response<[IssueComment]>) -> Void) -> URLSessionDataTaskProtocol? {
-        let router = CommentRouter.readComments(configuration, owner, repository, page, perPage)
+    @discardableResult
+    public func comments(_ session: RequestKitURLSession = URLSession.shared, owner: String, repository: String, page: Int? = nil, perPage: Int? = nil, since: Date? = nil, sort: Sort? = nil, direction: Direction? = nil, completion: @escaping (_ response: Response<[IssueComment]>) -> Void) -> URLSessionDataTaskProtocol? {
+        var params: [String: Any] = [:]
+        if let page = page {
+            params["page"] = page
+        }
+        if let perPage = perPage {
+            params["per_page"] = perPage
+        }
+        if let since = since {
+            params["since"] = Time.rfc3339String(since)
+        }
+        if let sort = sort {
+            params["sort"] = sort.rawValue
+        }
+        if let direction = direction {
+            params["direction"] = direction.rawValue
+        }
+        let router = CommentRouter.readComments(configuration, owner, repository, params)
         return router.loadJSON(session, expectedResultType: [[String: AnyObject]].self) { json, error in
             if let error = error {
                 completion(Response.failure(error))
@@ -186,7 +203,7 @@ public extension Octokit {
 enum CommentRouter: JSONPostRouter {
     case deleteComment(Configuration, String, String, Int)
     case readComment(Configuration, String, String, Int)
-    case readComments(Configuration, String, String, String, String)
+    case readComments(Configuration, String, String, [String: Any])
     case readIssueComments(Configuration, String, String, String)
     case patchComment(Configuration, String, String, Int, String)
     case postComment(Configuration, String, String, String, String)
@@ -219,7 +236,7 @@ enum CommentRouter: JSONPostRouter {
         switch self {
         case .deleteComment(let config, _, _, _): return config
         case .readComment(let config, _, _, _): return config
-        case .readComments(let config, _, _, _, _): return config
+        case .readComments(let config, _, _, _): return config
         case .readIssueComments(let config, _, _, _): return config
         case .patchComment(let config, _, _, _, _): return config
         case .postComment(let config, _, _, _, _): return config
@@ -230,8 +247,8 @@ enum CommentRouter: JSONPostRouter {
         switch self {
         case .deleteComment, .readComment, .readIssueComments:
             return [:]
-        case .readComments(_, _, _, let page, let perPage):
-            return ["per_page": perPage, "page": page]
+        case .readComments(_, _, _, let params):
+            return params
         case .patchComment(_, _, _, _, let body):
             return ["body": body]
         case .postComment(_, _, _, _, let body):
@@ -245,7 +262,7 @@ enum CommentRouter: JSONPostRouter {
             return "repos/\(owner)/\(repository)/issues/comments/\(id)"
         case .readComment(_, let owner, let repository, let id):
             return "repos/\(owner)/\(repository)/issues/comments/\(id)"
-        case .readComments(_, let owner, let repository, _, _):
+        case .readComments(_, let owner, let repository, _):
             return "repos/\(owner)/\(repository)/issues/comments"
         case .readIssueComments(_, let owner, let repository, let number):
             return "repos/\(owner)/\(repository)/issues/\(number)/comments"
